@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 
 /// Author: 2021/3/5
@@ -6,24 +9,54 @@ import 'package:dio/dio.dart';
 ///
 class DioManager {
   static final DioManager instance = DioManager._internal();
+  Dio _dio;
 
-  DioManager._internal(){
-    this.dio = Dio();
+  Dio get dio => _dio;
+
+  DioManager._internal() {
+    _dio = Dio();
+    _dio.options.connectTimeout = 5000; //5s
+    _dio.options.receiveTimeout = 5000;
+
+    LogInterceptor _logInterceptor =
+        LogInterceptor(requestBody: true, responseBody: true);
+    _dio.interceptors.add(_logInterceptor);
+    //_dio.interceptors.add(DioErrorInterceptor());
   }
 
-  Dio dio;
-}
-
-class NativeHeaderInterceptor extends InterceptorsWrapper {
-  @override
-  Future onRequest(RequestOptions options) async {
-    var channelHeader = Map();
-    print("channel header para " + channelHeader.toString());
-    if (channelHeader != null) {
-      Map map = new Map<String, dynamic>.from(channelHeader);
-      options.headers.addAll(map);
+  /// 设置代理地址
+  void _setProxy(String ipAndPort) {
+    if (ipAndPort == null || ipAndPort.isEmpty) {
+      return;
     }
-    return super.onRequest(options);
+    (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        (client) {
+      client.findProxy = (uri) {
+        return "PROXY " + ipAndPort;
+      };
+
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) {
+        return true;
+      };
+    };
   }
 }
 
+class DioErrorInterceptor extends Interceptor{
+
+  @override
+  Future onError(DioError err) {
+    // TODO: implement onError
+    return super.onError(err);
+  }
+  @override
+  Future onResponse(Response response) {
+    Response res = response;
+    if(res?.statusCode != 200){
+      res.statusCode = 200;
+      res.data = "错误！！！";
+    }
+    return super.onResponse(res);
+  }
+}
