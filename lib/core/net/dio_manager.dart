@@ -21,7 +21,7 @@ class DioManager {
     LogInterceptor _logInterceptor =
         LogInterceptor(requestBody: true, responseBody: true);
     _dio.interceptors.add(_logInterceptor);
-    //_dio.interceptors.add(DioErrorInterceptor());
+    _dio.interceptors.add(DioErrorInterceptor());
   }
 
   /// 设置代理地址
@@ -47,15 +47,10 @@ class DioErrorInterceptor extends Interceptor{
 
   @override
   Future onError(DioError err) {
-    // TODO: implement onError
-    return super.onError(err);
-  }
-  @override
-  Future onResponse(Response response) {
-    Response res = response;
-    if(res?.statusCode != 200){
+    Response res = Response();
+    if(res.statusCode != 200){
       res.statusCode = 200;
-      res.data = "错误！！！";
+      res.data = {"":""};
     }
     return super.onResponse(res);
   }
