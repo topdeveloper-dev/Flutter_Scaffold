@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Flutter_Scaffold/base/net/net_error_interceptor.dart';
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 
@@ -16,12 +17,12 @@ class DioManager {
   DioManager._internal() {
     _dio = Dio();
     _dio.options.connectTimeout = 5000; //5s
-    _dio.options.receiveTimeout = 5000;
+    _dio.options.receiveTimeout = 5000; //5s
 
     LogInterceptor _logInterceptor =
         LogInterceptor(requestBody: true, responseBody: true);
     _dio.interceptors.add(_logInterceptor);
-    //_dio.interceptors.add(DioErrorInterceptor());
+    _dio.interceptors.add(NetErrorInterceptor());
   }
 
   /// 设置代理地址
@@ -40,23 +41,5 @@ class DioManager {
         return true;
       };
     };
-  }
-}
-
-class DioErrorInterceptor extends Interceptor{
-
-  @override
-  Future onError(DioError err) {
-    // TODO: implement onError
-    return super.onError(err);
-  }
-  @override
-  Future onResponse(Response response) {
-    Response res = response;
-    if(res?.statusCode != 200){
-      res.statusCode = 200;
-      res.data = "错误！！！";
-    }
-    return super.onResponse(res);
   }
 }
