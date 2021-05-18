@@ -1,17 +1,18 @@
-import 'package:Flutter_Scaffold/base/utils/log_util.dart';
+import 'package:Flutter_Scaffold/model/base_response.dart';
 import 'package:dio/dio.dart';
 
 /// Author: xuweiyu
 /// Date: 4/22/21
 /// Description:
-class NetErrorInterceptor extends Interceptor {
+class NetErrorInterceptor extends InterceptorsWrapper {
   @override
-  Future onError(DioError err) {
-    Response response = err.response ?? Response();
-    if (response?.statusCode != 200) {
+  void onError(DioError err, ErrorInterceptorHandler handler) {
+    Response response = Response(requestOptions: err.requestOptions);
+    if (response.statusCode != 200) {
       response.statusCode = 200;
-      response.data = "错误！！！";
+      response.statusMessage = "网络异常";
+      response.data = BaseResponse(-1, "网络异常", null).toJson((value) => null);
     }
-    return Future.value(response);
+    handler.resolve(response);
   }
 }

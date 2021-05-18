@@ -1,0 +1,3 @@
+
+String data = '''{"data":[{"children":[],"courseId":13,"id":408,"name":"鸿洋","order":190000,"parentChapterId":407,"userControlSetTop":false,"visible":1},{"children":[],"courseId":13,"id":409,"name":"郭霖","order":190001,"parentChapterId":407,"userControlSetTop":false,"visible":1},{"children":[],"courseId":13,"id":434,"name":"Gityuan","order":190013,"parentChapterId":407,"userControlSetTop":false,"visible":1}],"errorCode":0,"errorMsg":""}''';
+String data1 = '''{"errorCode":0,"errorMsg":"", "data":{"errorCode":0,"errorMsg":""}}''';

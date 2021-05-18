@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:Flutter_Scaffold/base/net/net_error_interceptor.dart';
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 /// Author: 2021/3/5
 /// Date: wizz
@@ -10,7 +11,7 @@ import 'package:dio/dio.dart';
 ///
 class DioManager {
   static final DioManager instance = DioManager._internal();
-  Dio _dio;
+  late Dio _dio;
 
   Dio get dio => _dio;
 
@@ -19,9 +20,7 @@ class DioManager {
     _dio.options.connectTimeout = 5000; //5s
     _dio.options.receiveTimeout = 5000; //5s
 
-    LogInterceptor _logInterceptor =
-        LogInterceptor(requestBody: true, responseBody: true);
-    _dio.interceptors.add(_logInterceptor);
+    _dio.interceptors.add(PrettyDioLogger(requestBody: true, requestHeader: true, responseHeader: true));
     _dio.interceptors.add(NetErrorInterceptor());
   }
 
